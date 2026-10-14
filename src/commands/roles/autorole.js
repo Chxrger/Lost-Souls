@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const embeds = require('../../utils/embeds');
 const { stores } = require('../../utils/store');
 
@@ -11,7 +11,6 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('autorole')
     .setDescription('Manage roles given automatically to new members.')
-    .setDefaultMemberPermissions(PermissionFlagsBits.ManageRoles)
     .setDMPermission(false)
     .addSubcommand((sub) =>
       sub

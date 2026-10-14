@@ -1,6 +1,8 @@
 const { Events, MessageFlags } = require('discord.js');
 const embeds = require('../utils/embeds');
 const logger = require('../utils/logger');
+const { stores } = require('../utils/store');
+const { canUse, getRequiredTier, TIER_LABELS } = require('../utils/access');
 
 module.exports = {
   name: Events.InteractionCreate,
@@ -23,6 +25,23 @@ module.exports = {
     if (!command) {
       logger.warn(`No command found for /${interaction.commandName}.`);
       return;
+    }
+
+    if (interaction.guild && interaction.member) {
+      let allowed = true;
+      try {
+        allowed = canUse(interaction.member, command, stores.config.get());
+      } catch (err) {
+        logger.error(`Permission check failed for /${interaction.commandName}:`, err.message);
+      }
+
+      if (!allowed) {
+        const required = TIER_LABELS[getRequiredTier(command, stores.config.get())] || 'higher';
+        return interaction.reply({
+          embeds: [embeds.error(`You need the **${required}** tier to use this command.`)],
+          flags: MessageFlags.Ephemeral
+        });
+      }
     }
 
     const player = client.player;

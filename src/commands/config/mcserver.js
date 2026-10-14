@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const { stores } = require('../../utils/store');
 const embeds = require('../../utils/embeds');
 
@@ -11,7 +11,6 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('mcserver')
     .setDescription('Manage Minecraft servers that /server can query.')
-    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .setDMPermission(false)
     .addSubcommand((sub) =>
       sub

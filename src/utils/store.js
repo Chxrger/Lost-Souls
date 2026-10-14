@@ -26,6 +26,29 @@ const DEFAULT_CONFIG = {
     leaveOnEnd: true,
     leaveOnEmptyCooldownMs: 300000,
     leaveOnEndCooldownMs: 300000
+  },
+  welcome: {
+    enabled: true,
+    channelId: '',
+    messages: [
+      'Welcome to **{server}**, {user}! 🎉 You are member **#{memberCount}**.',
+      '{user} just joined the party! 👋 Everyone say hi!',
+      'A wild {username} appeared in **{server}**! You are the **{memberCount}th** member.'
+    ]
+  },
+  leave: {
+    enabled: true,
+    channelId: '',
+    messages: [
+      '{username} left **{server}**. See you soon! 👋',
+      '**{username}** has vanished into the shadows... 🕯️',
+      'Goodbye {username}. **{server}** now has **{memberCount}** souls.'
+    ]
+  },
+  permissions: {
+    adminRoles: [],
+    moderatorRoles: [],
+    commandTiers: {}
   }
 };
 

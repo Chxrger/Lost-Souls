@@ -1,6 +1,6 @@
 const { Events } = require('discord.js');
 const { stores } = require('../utils/store');
-const embeds = require('../utils/embeds');
+const greetings = require('../utils/greetings');
 const logger = require('../utils/logger');
 
 module.exports = {
@@ -22,14 +22,6 @@ module.exports = {
       }
     }
 
-    if (config.welcomeChannelId) {
-      const channel = member.guild.channels.cache.get(config.welcomeChannelId);
-      if (channel?.isTextBased()) {
-        const embed = embeds.success(
-          `Welcome ${member}!\nYou are member **#${member.guild.memberCount}** of **${member.guild.name}**.`
-        );
-        await channel.send({ content: `${member}`, embeds: [embed] }).catch(() => {});
-      }
-    }
+    await greetings.sendGreeting(member, 'welcome', config);
   }
 };

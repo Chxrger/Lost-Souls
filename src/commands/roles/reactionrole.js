@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits, ChannelType, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, ChannelType, MessageFlags } = require('discord.js');
 const embeds = require('../../utils/embeds');
 const { stores } = require('../../utils/store');
 const { normalizeEmoji, getMessages } = require('../../utils/reactionRoles');
@@ -7,7 +7,6 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('reactionrole')
     .setDescription('Set up emoji reaction roles.')
-    .setDefaultMemberPermissions(PermissionFlagsBits.ManageRoles)
     .setDMPermission(false)
     .addSubcommand((sub) =>
       sub

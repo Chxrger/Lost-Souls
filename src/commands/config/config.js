@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits, ChannelType, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, ChannelType, MessageFlags } = require('discord.js');
 const { stores } = require('../../utils/store');
 const embeds = require('../../utils/embeds');
 
@@ -11,7 +11,6 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('config')
     .setDescription('Configure the bot (embeds, channels).')
-    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .setDMPermission(false)
     .addSubcommand((sub) =>
       sub
@@ -109,6 +108,8 @@ module.exports = {
       const channel = interaction.options.getChannel('channel');
       stores.config.update((config) => {
         config.welcomeChannelId = channel ? channel.id : '';
+        config.welcome = config.welcome || {};
+        config.welcome.channelId = channel ? channel.id : '';
       });
       return interaction.reply({
         embeds: [embeds.success(channel ? `Welcomes will be posted in ${channel}.` : 'Welcome messages disabled.')],

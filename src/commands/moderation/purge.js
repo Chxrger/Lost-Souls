@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const embeds = require('../../utils/embeds');
 const { sendLog } = require('../../utils/logging');
 
@@ -8,7 +8,6 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('purge')
     .setDescription('Bulk delete recent messages in this channel.')
-    .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
     .setDMPermission(false)
     .addIntegerOption((option) =>
       option.setName('amount').setDescription('How many messages (1-100)').setRequired(true).setMinValue(1).setMaxValue(100)

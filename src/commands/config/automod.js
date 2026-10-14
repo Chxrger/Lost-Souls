@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits, ChannelType, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, ChannelType, MessageFlags } = require('discord.js');
 const { stores } = require('../../utils/store');
 const embeds = require('../../utils/embeds');
 
@@ -13,7 +13,6 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('automod')
     .setDescription('Configure automatic message filtering.')
-    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .setDMPermission(false)
     .addSubcommand((sub) =>
       sub

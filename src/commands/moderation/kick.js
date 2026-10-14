@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const embeds = require('../../utils/embeds');
 const { sendLog } = require('../../utils/logging');
 
@@ -6,7 +6,6 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('kick')
     .setDescription('Kick a member from the server.')
-    .setDefaultMemberPermissions(PermissionFlagsBits.KickMembers)
     .setDMPermission(false)
     .addUserOption((option) => option.setName('user').setDescription('Member to kick').setRequired(true))
     .addStringOption((option) => option.setName('reason').setDescription('Reason for the kick')),
