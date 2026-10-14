@@ -11,7 +11,7 @@ const PRESENCES = [
   { type: ActivityType.Watching, name: 'Workers @ Wegmans' },
   { type: ActivityType.Listening, name: 'Krusty Krab Pizza' },
   { type: ActivityType.Competing, name: '👻 in the afterlife 👻' },
-  { type: ActivityType.Watching, name: 'for `/help` ' },
+  { type: ActivityType.Watching, name: 'for /information and /rules ' },
   { type: ActivityType.Playing, name: 'Being the best Fry Cook at the Krusty Krab' },
   { type: ActivityType.Custom, name: 'Haunting the server 👻' }
 ];
