@@ -1,0 +1,19 @@
+[Unit]
+Description=Soul Discord Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=soulbot
+WorkingDirectory=/home/soulbot/soulbot
+ExecStart=/usr/bin/node src/index.js
+Environment=NODE_ENV=production
+EnvironmentFile=/home/soulbot/soulbot/.env
+Restart=on-failure
+RestartSec=5
+KillSignal=SIGINT
+TimeoutStopSec=15
+
+[Install]
+WantedBy=multi-user.target

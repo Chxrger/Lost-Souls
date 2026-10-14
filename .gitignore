@@ -1,0 +1,12 @@
+node_modules/
+.env
+npm-debug.log*
+logs/
+*.log
+
+# OS junk
+Thumbs.db
+.DS_Store
+
+# PM2 (if run locally)
+.pm2/

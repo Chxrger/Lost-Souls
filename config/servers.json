@@ -1,0 +1,10 @@
+{
+  "servers": [
+    {
+      "name": "Wegmans",
+      "host": "wegmans.godlike.club",
+      "port": null,
+      "type": "java"
+    }
+  ]
+}

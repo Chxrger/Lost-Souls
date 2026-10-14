@@ -1,0 +1,27 @@
+{
+  "logChannelId": "",
+  "welcomeChannelId": "",
+  "autorole": {
+    "humans": [
+      "1559214797994729622"
+    ],
+    "bots": []
+  },
+  "automod": {
+    "enabled": false,
+    "filteredWords": [],
+    "blockInvites": false,
+    "blockLinks": false,
+    "ignoreChannels": [],
+    "ignoreRoles": [],
+    "deleteMessage": true,
+    "warnUser": true
+  },
+  "music": {
+    "defaultVolume": 80,
+    "leaveOnEmpty": true,
+    "leaveOnEnd": true,
+    "leaveOnEmptyCooldownMs": 300000,
+    "leaveOnEndCooldownMs": 300000
+  }
+}
