@@ -10,7 +10,7 @@ module.exports = {
 
     client.user.setPresence({
       status: 'online',
-      activities: [{ name: 'Listening to a Ghost', type: ActivityType.Listening }]
+      activities: [{ name: 'Listening to a Ghost 👻', type: ActivityType.Listening }], [{ name: 'Being the best Frycook @ the Krusty Krab', type: ActivityType.Custom}]
     });
   }
 };
