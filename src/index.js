@@ -2,12 +2,12 @@ require('dotenv').config({ quiet: true });
 
 const { Player } = require('discord-player');
 const { DefaultExtractors } = require('@discord-player/extractor');
-const { YoutubeExtractor } = require('discord-player-youtubei');
 
 const { createClient } = require('./client');
 const { loadCommands } = require('./handlers/commandHandler');
 const { loadEvents } = require('./handlers/eventHandler');
 const registerPlayerEvents = require('./music/playerEvents');
+const { SafeYoutubeExtractor } = require('./music/youtubeExtractor');
 const logger = require('./utils/logger');
 
 function checkMusicDependencies() {
@@ -64,7 +64,7 @@ async function start() {
   }
 
   const player = new Player(client);
-  await player.extractors.register(YoutubeExtractor, extractorOptions);
+  await player.extractors.register(SafeYoutubeExtractor, extractorOptions);
   await player.extractors.loadMulti(DefaultExtractors);
   client.player = player;
 

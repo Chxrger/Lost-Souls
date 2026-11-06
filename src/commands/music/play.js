@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, PermissionsBitField, MessageFlags } = require('discord.js');
-const { QueryType } = require('discord-player');
 const embeds = require('../../utils/embeds');
+const { resolvePlayQuery } = require('../../music/resolveQuery');
 const { stores } = require('../../utils/store');
 
 module.exports = {
@@ -36,15 +36,16 @@ module.exports = {
       });
     }
 
-    const query = interaction.options.getString('query', true);
+    const input = interaction.options.getString('query', true);
     await interaction.deferReply();
 
     const music = stores.config.get().music || {};
-    const isUrl = /^https?:\/\//i.test(query);
+    const { query, searchEngine, blockExtractors } = resolvePlayQuery(input);
 
     try {
       const { track } = await client.player.play(voiceChannel, query, {
-        searchEngine: isUrl ? undefined : QueryType.YOUTUBE_SEARCH,
+        searchEngine,
+        blockExtractors,
         nodeOptions: {
           metadata: { channel: interaction.channel },
           volume: music.defaultVolume ?? 80,
