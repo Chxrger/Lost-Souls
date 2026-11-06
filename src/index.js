@@ -1,6 +1,5 @@
 require('dotenv').config({ quiet: true });
 
-const path = require('path');
 const { Player } = require('discord-player');
 const { DefaultExtractors } = require('@discord-player/extractor');
 const { YoutubeExtractor } = require('discord-player-youtubei');
@@ -11,11 +10,28 @@ const { loadEvents } = require('./handlers/eventHandler');
 const registerPlayerEvents = require('./music/playerEvents');
 const logger = require('./utils/logger');
 
-try {
-  const ffmpegPath = require('ffmpeg-static');
-  if (ffmpegPath) process.env.FFMPEG_PATH = ffmpegPath;
-} catch {
-  logger.warn('ffmpeg-static is not installed; music transcoding may fail if ffmpeg is not on PATH.');
+function checkMusicDependencies() {
+  try {
+    const { FFmpeg } = require('@discord-player/ffmpeg');
+    const resolved = FFmpeg.resolveSafe();
+    if (resolved) {
+      logger.info(`ffmpeg ready: ${resolved.version} (${resolved.command})`);
+    } else {
+      logger.error(
+        'ffmpeg could not be found. Music playback will fail. Install ffmpeg on the host, or re-run the ffmpeg-static installer (node node_modules/ffmpeg-static/install.js).'
+      );
+    }
+  } catch (err) {
+    logger.warn(`Could not verify ffmpeg: ${err.message}`);
+  }
+
+  try {
+    const mediaplex = require('mediaplex');
+    const opus = typeof mediaplex.getOpusVersion === 'function' ? mediaplex.getOpusVersion() : 'unknown';
+    logger.info(`mediaplex ready (opus ${opus}).`);
+  } catch (err) {
+    logger.warn(`mediaplex is unavailable (${err.message}); voice encoding may fail.`);
+  }
 }
 
 const client = createClient();
@@ -28,10 +44,33 @@ async function start() {
     return;
   }
 
+  checkMusicDependencies();
+
+  const extractorOptions = {};
+  if (process.env.YOUTUBE_COOKIE) {
+    extractorOptions.cookie = process.env.YOUTUBE_COOKIE;
+    logger.info('Using YOUTUBE_COOKIE for YouTube requests.');
+  }
+  if (process.env.YOUTUBE_DISABLE_PLAYER === 'true') extractorOptions.disablePlayer = true;
+
+  if (process.env.YOUTUBE_PROXY) {
+    try {
+      const { ProxyAgent } = require('undici');
+      extractorOptions.proxy = new ProxyAgent(process.env.YOUTUBE_PROXY);
+      logger.info('Using YOUTUBE_PROXY for YouTube requests.');
+    } catch (err) {
+      logger.warn(`Could not enable YOUTUBE_PROXY: ${err.message}`);
+    }
+  }
+
   const player = new Player(client);
-  await player.extractors.register(YoutubeExtractor, {});
+  await player.extractors.register(YoutubeExtractor, extractorOptions);
   await player.extractors.loadMulti(DefaultExtractors);
   client.player = player;
+
+  if (typeof player.extractors?.store?.size === 'number') {
+    logger.info(`Registered ${player.extractors.store.size} extractor(s).`);
+  }
 
   loadCommands(client);
   loadEvents(client);

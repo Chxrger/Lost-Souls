@@ -2,6 +2,11 @@ const { EmbedBuilder } = require('discord.js');
 const embeds = require('../utils/embeds');
 const logger = require('../utils/logger');
 
+function truncate(text, max = 400) {
+  const value = String(text ?? 'Unknown error');
+  return value.length > max ? `${value.slice(0, max - 1)}…` : value;
+}
+
 function nowPlayingEmbed(track) {
   const embed = new EmbedBuilder()
     .setColor(embeds.COLORS.music)
@@ -19,10 +24,18 @@ function nowPlayingEmbed(track) {
 }
 
 module.exports = function registerPlayerEvents(client, player) {
+  const debugEnabled = (process.env.LOG_LEVEL || '').toLowerCase() === 'debug';
+
   player.events.on('playerStart', (queue, track) => {
     const channel = queue.metadata?.channel;
     if (!channel) return;
     channel.send({ embeds: [nowPlayingEmbed(track)] }).catch(() => {});
+  });
+
+  player.events.on('playerSkip', (queue, track, reason, description) => {
+    logger.warn(
+      `Skipped "${track?.title}" in ${queue.guild.id}: ${truncate(reason, 100)}${description ? ` — ${truncate(description, 300)}` : ''}`
+    );
   });
 
   player.events.on('emptyQueue', (queue) => {
@@ -37,16 +50,37 @@ module.exports = function registerPlayerEvents(client, player) {
     channel.send({ embeds: [embeds.info('Everyone left the voice channel, stopping playback.')] }).catch(() => {});
   });
 
-  player.events.on('playerError', (queue, track, error) => {
-    logger.error(`Playback error for "${track?.title}" in ${queue.guild.id}: ${error?.message || error}`);
+  // NOTE: discord-player emits playerError as (queue, error, track).
+  player.events.on('playerError', (queue, error, track) => {
+    const reason = truncate(error?.message || error);
+    logger.error(`Playback error for "${track?.title}" in ${queue.guild.id}: ${reason}`);
+
+    const channel = queue.metadata?.channel;
+    if (!channel) return;
+    channel
+      .send({
+        embeds: [
+          embeds.error(
+            `Could not play **${truncate(track?.title, 120)}**.\n` +
+              `Reason: \`${reason}\`\n` +
+              'If this mentions ffmpeg or a missing binary, install ffmpeg on the host (or reinstall dependencies).'
+          )
+        ]
+      })
+      .catch(() => {});
   });
 
   player.events.on('error', (queue, error) => {
-    logger.error(`Player error in ${queue?.guild?.id || 'unknown'}: ${error?.message || error}`);
+    logger.error(`Player error in ${queue?.guild?.id || 'unknown'}: ${truncate(error?.message || error)}`);
   });
 
-  player.events.on('debug', () => {
-    // Uncomment the line below if you need verbose player diagnostics.
-    // logger.debug(args);
+  player.events.on('disconnect', (queue) => {
+    logger.warn(`Disconnected from voice in ${queue?.guild?.id || 'unknown'}.`);
   });
+
+  if (debugEnabled) {
+    player.events.on('debug', (queue, message) => {
+      logger.debug(`[player:${queue?.guild?.id || 'unknown'}] ${message}`);
+    });
+  }
 };
