@@ -8,10 +8,10 @@ const PRESENCE_ROTATE_MS = 10 * 60 * 1000;
 // For Custom, `name` is the text shown after the emoji/prefix.
 const PRESENCES = [
   { type: ActivityType.Playing, name: '🍔 Krusty Krab Simulator 🍔' },
-  { type: ActivityType.Watching, name: 'Workers @ Wegmans' },
+  { type: ActivityType.Watching, name: 'Working @ Wegmans' },
   { type: ActivityType.Listening, name: 'Krusty Krab Pizza' },
   { type: ActivityType.Competing, name: '👻 in the afterlife 👻' },
-  { type: ActivityType.Watching, name: 'for /information and /rules ' },
+  { type: ActivityType.Watching, name: 'use /information and /rules ' },
   { type: ActivityType.Playing, name: 'Being the best Fry Cook at the Krusty Krab' },
   { type: ActivityType.Custom, name: 'Haunting the server 👻' }
 ];
