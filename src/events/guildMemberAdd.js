@@ -6,6 +6,7 @@ const logger = require('../utils/logger');
 module.exports = {
   name: Events.GuildMemberAdd,
   async execute(client, member) {
+    logger.debug(`Member joined: ${member.id} in ${member.guild.id}.`);
     const config = stores.config.get();
 
     const roleIds = member.user.bot

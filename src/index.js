@@ -8,6 +8,8 @@ const { loadCommands } = require('./handlers/commandHandler');
 const { loadEvents } = require('./handlers/eventHandler');
 const registerPlayerEvents = require('./music/playerEvents');
 const { SafeYoutubeExtractor } = require('./music/youtubeExtractor');
+const greetings = require('./utils/greetings');
+const { stores } = require('./utils/store');
 const logger = require('./utils/logger');
 
 function checkMusicDependencies() {
@@ -34,6 +36,18 @@ function checkMusicDependencies() {
   }
 }
 
+function logGreetingSettings() {
+  const config = stores.config.get();
+  for (const type of ['welcome', 'leave']) {
+    const settings = greetings.resolveSettings(config, type);
+    logger.info(
+      `${type} messages: ${settings.enabled ? 'enabled' : 'disabled'}; ` +
+        `channel: ${settings.channelId ? settings.channelId : 'NOT SET'}; ` +
+        `${settings.messages.length} template(s).`
+    );
+  }
+}
+
 const client = createClient();
 
 async function start() {
@@ -45,6 +59,7 @@ async function start() {
   }
 
   checkMusicDependencies();
+  logGreetingSettings();
 
   const extractorOptions = {};
   if (process.env.YOUTUBE_COOKIE) {

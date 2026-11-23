@@ -153,19 +153,37 @@ module.exports = {
       });
     }
 
-    const channel = interaction.options.getChannel('channel') || interaction.channel;
-    const text = greetings.format(greetings.pickRandom(settings.messages), interaction.member);
-
     const result = stores.config.get();
     const live = greetings.resolveSettings(result, type);
-    if (!live.enabled) {
+    const previewChannel = interaction.options.getChannel('channel');
+
+    if (previewChannel) {
+      const text = greetings.format(greetings.pickRandom(live.messages), interaction.member);
+      await previewChannel.send({ content: text, allowedMentions: { parse: ['users'] } });
       return interaction.reply({
-        embeds: [embeds.warn(`${type} messages are currently disabled.`)],
+        embeds: [embeds.success(`Sent a ${type} preview to ${previewChannel}.`)],
         flags: MessageFlags.Ephemeral
       });
     }
 
-    await channel.send({ content: text, allowedMentions: { parse: ['users'] } });
-    return interaction.reply({ embeds: [embeds.success(`Sent a ${type} preview to ${channel}.`)], flags: MessageFlags.Ephemeral });
+    // No override: exercise the exact same path used by join/leave events.
+    const sent = await greetings.sendGreeting(interaction.member, type, result);
+    if (!sent) {
+      return interaction.reply({
+        embeds: [
+          embeds.warn(
+            `No ${type} message was sent. Current settings: ` +
+              `enabled = **${live.enabled}**, channel = **${live.channelId ? `<#${live.channelId}>` : 'none'}**. ` +
+              'Use `/welcome set-channel` and `/welcome toggle` to change them.'
+          )
+        ],
+        flags: MessageFlags.Ephemeral
+      });
+    }
+
+    return interaction.reply({
+      embeds: [embeds.success(`Sent a ${type} test to <#${live.channelId}>.`)],
+      flags: MessageFlags.Ephemeral
+    });
   }
 };
